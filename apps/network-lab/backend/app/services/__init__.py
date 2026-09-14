@@ -1,1 +1,1 @@
-"""Modem service adapters."""
+"""Network Lab backend services."""

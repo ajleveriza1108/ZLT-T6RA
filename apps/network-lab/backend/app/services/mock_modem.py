@@ -45,7 +45,18 @@ def mock_summary() -> dict:
             "cpin": "+CPIN: READY\r\n\r\nOK",
             "operator": '+COPS: 0,0,"Globe Telecom-PH",7\r\n\r\nOK',
             "cereg": "+CEREG: 0,1\r\n\r\nOK",
+            "cgreg": "+CGREG: 0,1\r\n\r\nOK",
             "attach": "+CGATT: 1\r\n\r\nOK",
             "signal": "+CSQ: 29,99\r\n\r\nOK",
+            "contexts": '+CGDCONT: 1,"IPV4V6","internet.globe.com.ph","0.0.0.0"\r\n+CGDCONT: 9,"IPV4V6","ims","0.0.0.0"\r\n\r\nOK',
         },
     }
+
+
+def mock_networks() -> list[dict]:
+    return [
+        {"operator": "Globe Telecom-PH", "numeric": "51502", "rat": "LTE", "status": "Current"},
+        {"operator": "Smart", "numeric": "51503", "rat": "LTE", "status": "Forbidden"},
+        {"operator": "DITO", "numeric": "51566", "rat": "LTE", "status": "Available"},
+        {"operator": "ISLACOM", "numeric": "51505", "rat": "LTE", "status": "Available"},
+    ]

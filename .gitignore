@@ -18,6 +18,7 @@ dist/
 # Local runtime
 .env
 *.log
+.backup-v*/
 
 # Device data / identifiers / captures
 captures/*
