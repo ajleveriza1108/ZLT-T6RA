@@ -1,0 +1,30 @@
+def mock_summary() -> dict:
+    return {
+        "device": "ZLT T6R-A",
+        "connected": True,
+        "operator": "Globe Telecom-PH",
+        "rat": "LTE",
+        "band": "B3",
+        "pci": 123,
+        "cfun": 1,
+        "sim_status": "READY",
+        "registered": True,
+        "packet_attached": True,
+        "apn": "internet.globe.com.ph",
+        "wan": "Lab Mock",
+        "ipv4": "10.113.76.24",
+        "signal": {
+            "rsrp": -87,
+            "rsrq": -10,
+            "sinr": 18,
+            "rssi": -65,
+            "csq": 29,
+        },
+        "internet": {
+            "ping_ms": 28,
+            "packet_loss_pct": 0,
+            "download_mbps": 48.6,
+            "upload_mbps": 12.4,
+            "dns": "OK",
+        },
+    }
