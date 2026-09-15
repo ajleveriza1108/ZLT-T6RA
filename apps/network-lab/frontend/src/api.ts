@@ -10,60 +10,107 @@ import type {
   TelemetrySample,
 } from "./types";
 
-async function parseResponse<T>(res: Response): Promise<T> {
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(body || `HTTP ${res.status}`);
+type LocalRuntime = {
+  apiBase: string;
+};
+
+let runtimePromise: Promise<LocalRuntime> | null = null;
+
+async function runtime(): Promise<LocalRuntime> {
+  if (!runtimePromise) {
+    runtimePromise = fetch("/runtime.json", {
+      cache: "no-store",
+    }).then(async (response) => {
+      if (!response.ok) {
+        throw new Error(
+          `Runtime configuration unavailable: HTTP ${response.status}`,
+        );
+      }
+
+      const contentType = response.headers.get("content-type") ?? "";
+      if (!contentType.includes("application/json")) {
+        throw new Error(
+          "Runtime configuration did not return JSON.",
+        );
+      }
+
+      const value = (await response.json()) as Partial<LocalRuntime>;
+
+      if (!value.apiBase || typeof value.apiBase !== "string") {
+        throw new Error("runtime.json does not contain apiBase.");
+      }
+
+      return {
+        apiBase: value.apiBase.replace(/\/+$/, ""),
+      };
+    });
   }
 
-  return (await res.json()) as T;
+  return runtimePromise;
+}
+
+async function request<T>(
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
+  const cfg = await runtime();
+  const response = await fetch(`${cfg.apiBase}${path}`, init);
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(body || `HTTP ${response.status}`);
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (!contentType.includes("application/json")) {
+    const preview = (await response.text()).slice(0, 120);
+    throw new Error(
+      `API expected JSON but received ${contentType || "unknown content type"}: ${preview}`,
+    );
+  }
+
+  return (await response.json()) as T;
 }
 
 export const api = {
   health: (): Promise<Health> =>
-    fetch("/api/health").then((res) =>
-      parseResponse<Health>(res),
-    ),
+    request<Health>("/api/health"),
 
   summary: (): Promise<DeviceSummary> =>
-    fetch("/api/device/summary").then((res) =>
-      parseResponse<DeviceSummary>(res),
-    ),
+    request<DeviceSummary>("/api/device/summary"),
 
   getConfig: (): Promise<RuntimeConfig> =>
-    fetch("/api/config").then((res) =>
-      parseResponse<RuntimeConfig>(res),
-    ),
+    request<RuntimeConfig>("/api/config"),
 
   setSerialPort: (
     port: string | null,
   ): Promise<RuntimeConfig> =>
-    fetch("/api/config/serial", {
+    request<RuntimeConfig>("/api/config/serial", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ port }),
-    }).then((res) => parseResponse<RuntimeConfig>(res)),
+    }),
 
   discoverDevices: (): Promise<{
     candidates: SerialPortInfo[];
     resolved_port: string | null;
   }> =>
-    fetch("/api/device/discover", {
+    request<{
+      candidates: SerialPortInfo[];
+      resolved_port: string | null;
+    }>("/api/device/discover", {
       method: "POST",
-    }).then((res) =>
-      parseResponse<{
-        candidates: SerialPortInfo[];
-        resolved_port: string | null;
-      }>(res),
-    ),
+    }),
 
   setMode: (mode: Mode): Promise<{ mode: Mode }> =>
-    fetch(`/api/mode?mode=${mode}`, {
-      method: "POST",
-    }).then((res) =>
-      parseResponse<{ mode: Mode }>(res),
+    request<{ mode: Mode }>(
+      `/api/mode?mode=${encodeURIComponent(mode)}`,
+      {
+        method: "POST",
+      },
     ),
 
   scanNetworks: (
@@ -72,35 +119,32 @@ export const api = {
     results: NetworkResult[];
     note: string;
   }> =>
-    fetch(`/api/network/scan?confirm=${confirm}`, {
-      method: "POST",
-    }).then((res) =>
-      parseResponse<{
-        results: NetworkResult[];
-        note: string;
-      }>(res),
+    request<{
+      results: NetworkResult[];
+      note: string;
+    }>(
+      `/api/network/scan?confirm=${confirm ? "true" : "false"}`,
+      {
+        method: "POST",
+      },
     ),
 
   internetTest: (): Promise<InternetResult> =>
-    fetch("/api/internet/test", {
+    request<InternetResult>("/api/internet/test", {
       method: "POST",
-    }).then((res) =>
-      parseResponse<InternetResult>(res),
-    ),
+    }),
 
   telemetry: (
     limit = 120,
   ): Promise<{ samples: TelemetrySample[] }> =>
-    fetch(`/api/telemetry?limit=${limit}`).then((res) =>
-      parseResponse<{ samples: TelemetrySample[] }>(res),
+    request<{ samples: TelemetrySample[] }>(
+      `/api/telemetry?limit=${encodeURIComponent(String(limit))}`,
     ),
 
   captureTelemetry: (): Promise<TelemetrySample> =>
-    fetch("/api/telemetry/capture", {
+    request<TelemetrySample>("/api/telemetry/capture", {
       method: "POST",
-    }).then((res) =>
-      parseResponse<TelemetrySample>(res),
-    ),
+    }),
 
   queryAt: (
     key: string,
@@ -108,26 +152,23 @@ export const api = {
     command: string;
     response: string;
   }> =>
-    fetch(`/api/at/query?key=${encodeURIComponent(key)}`, {
-      method: "POST",
-    }).then((res) =>
-      parseResponse<{
-        command: string;
-        response: string;
-      }>(res),
+    request<{
+      command: string;
+      response: string;
+    }>(
+      `/api/at/query?key=${encodeURIComponent(key)}`,
+      {
+        method: "POST",
+      },
     ),
 
   atCommands: (): Promise<{
     commands: Record<string, string>;
   }> =>
-    fetch("/api/at/commands").then((res) =>
-      parseResponse<{
-        commands: Record<string, string>;
-      }>(res),
-    ),
+    request<{
+      commands: Record<string, string>;
+    }>("/api/at/commands"),
 
   firmwareStatus: (): Promise<FirmwareStatus> =>
-    fetch("/api/firmware/status").then((res) =>
-      parseResponse<FirmwareStatus>(res),
-    ),
+    request<FirmwareStatus>("/api/firmware/status"),
 };

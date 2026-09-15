@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import os
+
 import threading
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from .services.config_loader import app_metadata
@@ -29,6 +32,17 @@ app = FastAPI(
     version=str(_META["version"]),
 )
 
+
+_allowed_origin = os.getenv("T6RA_ALLOWED_ORIGIN")
+
+if _allowed_origin:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[_allowed_origin],
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["Content-Type"],
+    )
 _runtime_lock = threading.Lock()
 _runtime_mode = str(
     get_settings()

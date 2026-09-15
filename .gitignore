@@ -42,3 +42,4 @@ firmware/analysis/extracted/
 *.p12
 *.pfx
 credentials.*
+apps/network-lab/frontend/public/runtime.json
