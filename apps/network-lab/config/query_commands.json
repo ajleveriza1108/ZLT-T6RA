@@ -1,0 +1,19 @@
+{
+  "attention": "AT",
+  "identity": "ATI",
+  "manufacturer": "AT+CGMI",
+  "model": "AT+CGMM",
+  "cfun": "AT+CFUN?",
+  "cpin": "AT+CPIN?",
+  "operator": "AT+COPS?",
+  "creg": "AT+CREG?",
+  "cgreg": "AT+CGREG?",
+  "cereg": "AT+CEREG?",
+  "attach": "AT+CGATT?",
+  "contexts": "AT+CGDCONT?",
+  "active_contexts": "AT+CGACT?",
+  "addresses": "AT+CGPADDR",
+  "signal": "AT+CSQ",
+  "hcsq": "AT^HCSQ?",
+  "sysinfoex": "AT^SYSINFOEX?"
+}

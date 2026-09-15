@@ -74,3 +74,52 @@ export type FirmwareStatus = {
     detail: string;
   }>;
 };
+
+export type SerialPortInfo = {
+  device: string;
+  description: string | null;
+  manufacturer: string | null;
+  product: string | null;
+  interface: string | null;
+  hwid: string | null;
+  score: number;
+  responsive?: boolean;
+  identity?: string | null;
+  model?: string | null;
+  error?: string | null;
+};
+
+export type RuntimeConfig = {
+  settings: {
+    runtime: {
+      mode: Mode;
+    };
+    serial: {
+      port: string | null;
+      baudrate: number;
+      read_timeout_seconds: number;
+      write_timeout_seconds: number;
+      query_timeout_seconds: number;
+      open_retries: number;
+      scan_timeout_seconds: number;
+    };
+    network: {
+      dns_test_host: string;
+      ping_target: string;
+      ping_count: number;
+      ping_timeout_ms: number;
+    };
+  };
+  resolved_port: string | null;
+  ports: SerialPortInfo[];
+};
+
+export type Health = {
+  ok: boolean;
+  name: string;
+  version: string;
+  mode: Mode;
+  detected_port: string | null;
+  write_commands_enabled: boolean;
+  firmware_writes_enabled: boolean;
+};

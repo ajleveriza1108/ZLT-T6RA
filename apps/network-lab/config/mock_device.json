@@ -1,0 +1,57 @@
+{
+  "device": "Mock Cellular Modem",
+  "connected": true,
+  "mode": "mock",
+  "port": "SIMULATED",
+  "operator": "Lab Operator",
+  "rat": "LTE",
+  "cfun": 1,
+  "sim_status": "READY",
+  "registered": true,
+  "packet_attached": true,
+  "csq": 24,
+  "hcsq": {
+    "rat": "LTE",
+    "raw_values": [70, 58, 145, 24],
+    "raw": "^HCSQ:\"LTE\",70,58,145,24"
+  },
+  "sysinfoex": "^SYSINFOEX: mock",
+  "contexts": [
+    {
+      "cid": 1,
+      "pdp_type": "IPV4V6",
+      "apn": "lab.apn",
+      "pdp_address": "0.0.0.0",
+      "active": true,
+      "addresses": ["10.0.0.2"]
+    }
+  ],
+  "apn": "lab.apn",
+  "ipv4": "10.0.0.2",
+  "pdp_active": true,
+  "raw": {
+    "attention": "AT\r\n\r\nOK",
+    "identity": "Mock Cellular Modem\r\n\r\nOK",
+    "model": "Mock Model\r\n\r\nOK",
+    "cfun": "+CFUN: 1\r\n\r\nOK",
+    "cpin": "+CPIN: READY\r\n\r\nOK",
+    "operator": "+COPS: 0,0,\"Lab Operator\",7\r\n\r\nOK",
+    "cereg": "+CEREG: 0,1\r\n\r\nOK",
+    "attach": "+CGATT: 1\r\n\r\nOK",
+    "signal": "+CSQ: 24,99\r\n\r\nOK"
+  },
+  "networks": [
+    {
+      "operator": "Lab Operator",
+      "numeric": "00101",
+      "rat": "LTE",
+      "status": "Current"
+    },
+    {
+      "operator": "Lab Alternate",
+      "numeric": "00102",
+      "rat": "LTE",
+      "status": "Available"
+    }
+  ]
+}

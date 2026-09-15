@@ -1,0 +1,23 @@
+{
+  "runtime": {
+    "mode": "mock"
+  },
+  "serial": {
+    "port": null,
+    "baudrate": 115200,
+    "read_timeout_seconds": 0.35,
+    "write_timeout_seconds": 2.0,
+    "query_timeout_seconds": 4.5,
+    "open_retries": 8,
+    "scan_timeout_seconds": 160.0
+  },
+  "network": {
+    "dns_test_host": "example.com",
+    "ping_target": "1.1.1.1",
+    "ping_count": 4,
+    "ping_timeout_ms": 1200
+  },
+  "telemetry": {
+    "memory_limit": 1000
+  }
+}
